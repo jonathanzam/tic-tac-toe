@@ -1,0 +1,220 @@
+//**************************************************************************//
+//*			Author:	Jonathan Zamudio		       	*//
+//*			Class:  Essentials of Computer Programming	*//
+//*			Period:  5					*//
+//*			Date Due:					*//
+//*************************************************************************//
+//* 	Description:  This program will play a game of tic tac toe	*//			
+//*									*//
+//*************************************************************************//
+//*	Program Grading criteria:					*//
+//*	flowchart/program plan………………………………………………………_2_/5	*//
+//*	heading(name, class, period, due date, description)………_5_/5	*//
+//*	variables(meaningful names, proper use)…………………………__10_/10	*//
+//*	documentation(descriptive, thorough, used where needed)…_10_/10*//
+//*	structure(no repeated code, proper use of structures)…_8_/10	*//
+//*	output(works as specified, proper I/O statements)………_7_/10	*//
+//*				number of days late     -______(5)	*//
+//*					TOTAL:		_42_/50	*//	
+//*************************************************************************//
+package tic.tac.toe;
+
+import static java.lang.System.out;
+import java.util.Scanner;
+import static java.lang.Math.*;
+
+public class TICTACTOE {
+
+    //state variables: User input/Symbol ;board, 3 by 3 array
+    //char user; [] [] board;
+    public static final int ROWS = 3, COLS = 3; // number of rows and columns
+    public static int[][] board = new int[ROWS][COLS];//creats empty board
+    public static String x = "X", o = "O", user1Symbol, user2Symbol;
+    public static int currentRow, currentCol, userSymbol;
+    public static Scanner kb = new Scanner(System.in);
+    public static final int EMPTY = 0;
+    public static final int USER1 = 1;
+    public static final int USER2 = 2;
+    public static boolean win;
+
+    public static void chooseSymbol(String user) {
+
+        if (user.equalsIgnoreCase(x)) {
+            user1Symbol = " X ";
+            user2Symbol = " O ";//other player is O
+            out.println("You are X");//if user input x, their symbol is x
+        } else if (user.equalsIgnoreCase(o)) {
+            user1Symbol = " O ";
+            user2Symbol = " X ";//Other player is X
+            out.println("You are O");//if user input o, their symbol is o
+        }
+
+    }
+
+    public static void user1_move() {
+
+        out.println("Player 1 enter your move: (row[1-3] column[1-3])");
+        int row = kb.nextInt() - 1;//lowers number input because array starts at 0
+        int col = kb.nextInt() - 1;//lowers number input because array starts at 0
+        
+        //checks if space is occupied by other user
+        while (board[row][col] == USER2 || board[row][col] == USER1)
+        {
+            out.println("This space is occupied!\nChoose another space: ");
+            row = kb.nextInt() - 1;//lowers number input because array starts at 0
+            col = kb.nextInt() - 1;//lowers number input because array starts at 0
+        }
+        //only puts input if box is currently empty
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS && board[row][col] == EMPTY) {
+            currentRow = row;
+            currentCol = col;
+            board[currentRow][currentCol] = USER1;//takes input as user1 move and stores
+            //it in chosen box
+        }
+    }
+
+    public static void user2_move() {
+
+        if(win!=true)//runs if win is not true
+        {
+        out.println("Player 2 enter your move: (row[1-3] column[1-3])");
+        int row = kb.nextInt() - 1;//lowers number input because array starts at 0
+        int col = kb.nextInt() - 1;//lowers number input because array starts at 0
+           
+        //checks if space is occupied by other user
+        while (board[row][col] == USER1 || board[row][col] == USER2)
+        {
+            out.println("This space is occupied!\nChoose another space: ");
+            row = kb.nextInt() - 1;//lowers number input because array starts at 0
+            col = kb.nextInt() - 1;//lowers number input because array starts at 0
+        }
+        
+        //only puts input if box is currently empty
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS && board[row][col] == EMPTY) {
+            currentRow = row;
+            currentCol = col;
+            board[currentRow][currentCol] = USER2;//takes input as user2 move and stores
+            //it in chosen box
+        }
+        }
+        
+    }
+    public static void comp_move()
+    {
+        if(win!=true)//runs if win is not true
+        {
+        out.println("Computer move");
+        
+        int row = (int) (random() * 3);
+        int col = (int) (random() * 3);
+        
+        while(board[row][col] == USER1 || board[row][col] == USER2)//checks if space is empty or not
+        {
+            row = (int) (random() * 3);
+            col = (int) (random() * 3);
+        }
+        
+        
+        //only puts input if box is currently empty
+        if (row >= 0 && row < ROWS && col >= 0 && col < COLS && board[row][col] == EMPTY) {
+            currentRow = row;
+            currentCol = col;
+            board[currentRow][currentCol] = USER2;//takes input as user2 move and stores
+            //it in chosen box
+        }
+    }
+    }
+    public static void printBoard() {
+        
+        if(win!=true)//runs if win is not true
+        {
+        out.println("-------------"); // print horizontal line
+        
+        for (int row = 0; row < ROWS; ++row) 
+        {
+            for (int col = 0; col < COLS; ++col) 
+            {
+                out.print("|");   // print vertical line
+                printSymbol(board[row][col]);
+            }
+            
+            System.out.println("|");
+            out.println("-------------"); // print horizontal line
+        }
+            }
+    }
+    
+    public static void printSymbol(int content) {
+        switch (content) {
+            case EMPTY:
+                System.out.print("   ");
+                break;//stores blank spaces in blank boxes
+            case USER1:
+                System.out.print(user1Symbol);
+                break;//stores user1Symbol in boxes chosen
+            case USER2:
+                System.out.print(user2Symbol);
+                break;//stores user2Symbol in boxes chosen
+        }
+    }
+
+    //win: gets symbol, row, and column and goes through all possible combinations 
+    //for win condition
+    public static boolean win(int theSeed, int currentRow, int currentCol) {
+        return (board[currentRow][0] == theSeed // 3-in-the-row
+                && board[currentRow][1] == theSeed
+                && board[currentRow][2] == theSeed
+                || board[0][currentCol] == theSeed // 3-in-the-column
+                && board[1][currentCol] == theSeed
+                && board[2][currentCol] == theSeed
+                || currentRow == currentCol // 3-in-the-diagonal
+                && board[0][0] == theSeed
+                && board[1][1] == theSeed
+                && board[2][2] == theSeed
+                || currentRow + currentCol == 2 // 3-in-the-opposite-diagonal
+                && board[0][2] == theSeed
+                && board[1][1] == theSeed
+                && board[2][0] == theSeed);
+
+    }
+
+    public static void hasWon(int userSymbol, int currentRow, int currentCol) {
+
+        if (win(userSymbol, currentRow, currentCol)) {////reads symbol and row and 
+            //column and checks if it meets win condition
+            out.println("YOU WIN!");
+            win = true;
+            
+        }
+
+    }
+
+    public static void main(String[] args) {
+
+        String user;
+
+        //chooseSymbol
+        out.println("Player 1 choose 'x' or 'o'");
+        Scanner kb = new Scanner(System.in);
+        user = kb.next();
+
+        chooseSymbol(user);//sends user input to chooseSymbol
+
+        do {
+            user1_move();//user1 puts input
+            printBoard();
+            hasWon(USER1, currentRow, currentCol);//sends user's input and current state 
+            //of board to see if win condition has been met
+            
+            
+            
+            user2_move();//user2 puts input
+            printBoard();
+            hasWon(USER2, currentRow, currentCol);//sends user's input and current state 
+            //of board to see if win condition has been met
+
+        } while (win != true);//loops game until win condition is completed(3 in a row)
+
+    }
+
+}
